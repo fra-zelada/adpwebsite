@@ -4,6 +4,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    background-color: rgb(242, 243, 243);
 }
 
 a {
@@ -18,9 +19,53 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+    
   }
   body {
     color: white;
     background: black;
   }
+}
+/* main { */
+  /* z-index: 1; */
+/* } */
+
+.headerCustom {
+  margin-top: 0;
+  position: sticky;
+  top: -105;
+  z-index: 3 ;
+  width: 100%;
+  background: rgb(192, 192, 231);
+  /* background-image: url(https://www.wwe.com/f/styles/talent_champion_xl/public/all/2022/11/20221107_SSeries_Match_Womens_FC_Date--1be8ac9fe134defe72df135ebf98110e.jpg); */
+
+}
+.custom-shape-conter{
+position: sticky important!;
+margin-top: 0;
+top:0;
+border: 'solid 1px red'
+}
+.custom-shape-divider-top-1668139847 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 100;
+}
+
+.custom-shape-divider-top-1668139847 svg {
+  position: relative;
+  display: block;
+  width: calc(106% + 1.3px);
+  height: 98px;
+  transform: rotateY(180deg);
+  z-index: 100;
+
+}
+
+.custom-shape-divider-top-1668139847 .shape-fill {
+  fill: #E9DEDE;
 }
