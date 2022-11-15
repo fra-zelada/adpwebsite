@@ -43,10 +43,10 @@ const Match: FC<Props> = ({ match }) => {
     const { img, oponents, title, eventCode, subtitle, _id } = matchData;
     const oponentsList = oponents.map(({ name }) => name);
     const [open, setOpen] = useState(false);
-    const [vote, setVote] = useState(undefined);
+    const [vote, setVote] = useState<any>(undefined);
     const [sendingVote, setSendingVote] = useState(false);
 
-    const [colorList, setColorList] = useState([]);
+    const [colorList, setColorList] = useState<any>([]);
 
     useEffect(() => {
         let colors = [];

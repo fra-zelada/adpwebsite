@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import axios from "axios";
-import { IMatch } from "../interfaces/match";
+import { IMatch, IOponent } from "../interfaces/match";
 
 const MatchCRUD = () => {
-    const [oponentsTags, setOponentsTags] = useState([]);
+    const [oponentsTags, setOponentsTags] = useState<any>([]);
     const [form, setForm] = useState({
         event: "",
         title: "",
@@ -25,23 +25,27 @@ const MatchCRUD = () => {
     });
     const { event, img, oponents, subtitle, title } = form;
     const addOponent = (
-        event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+        event:
+            | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+            | any
     ) => {
         const oponent = event.target.value.trim();
         if (oponent.length > 0)
-            setOponentsTags((oldArray) => [...oldArray, oponent]);
+            setOponentsTags((oldArray: IOponent[]) => [...oldArray, oponent]);
         setForm((prev) => ({ ...prev, oponents: "" }));
     };
     const onDeleteOponentTag = (event: string) => {
         let oponentsTemp = oponentsTags;
-        oponentsTemp = oponentsTags.filter((oponent) => oponent !== event);
+        oponentsTemp = oponentsTags.filter(
+            (oponent: string) => oponent !== event
+        );
         setOponentsTags(oponentsTemp);
     };
 
     const onSubmit = async () => {
-        const oponentsArrayObject = [];
+        const oponentsArrayObject: { name: string; votes: number }[] = [];
 
-        oponentsTags.forEach((element, i) => {
+        oponentsTags.forEach((element: string) => {
             oponentsArrayObject.push({ name: element, votes: 0 });
         });
 
@@ -158,7 +162,7 @@ const MatchCRUD = () => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        {oponentsTags.map((oponent, i) => (
+                        {oponentsTags.map((oponent: string, i: number) => (
                             <Chip
                                 key={i}
                                 label={oponent}
