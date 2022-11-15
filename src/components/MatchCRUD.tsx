@@ -58,8 +58,11 @@ const MatchCRUD = () => {
 
             votes: 0,
         };
-        console.log(newMatch);
-        await axios.post("/api/match", newMatch);
+        try {
+            await axios.post("/api/match", newMatch);
+        } catch (error) {
+            alert(error);
+        }
     };
 
     return (
