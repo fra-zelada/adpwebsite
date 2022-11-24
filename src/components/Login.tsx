@@ -33,8 +33,8 @@ const Login: FC<Props> = ({ providers, csrfToken, error: errorCode = "" }) => {
 
     const [loginForm, setLoginForm] = useState({
         csrfToken,
-        username: "francisco@gmail.com",
-        password: "pass",
+        username: "",
+        password: "",
     });
     const { username, password } = loginForm;
 
