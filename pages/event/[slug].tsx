@@ -8,17 +8,21 @@ import { IMatch } from "../../src/interfaces/match";
 import Match from "../../src/components/Match";
 import MatchModel from "../../src/models/match";
 import { redirect } from "next/dist/server/api-utils";
+import ScheduledEvent from "../../src/models/scheduledEvent";
+import { IScheduledEvent } from "../../src/interfaces/scheduledEvent";
 interface Props {
     matches: IMatch[];
     event: string;
 }
 
-const Home: NextPage<Props> = ({ matches, event }) => {
+const Home: NextPage<Props> = ({ matches, event = "A Duras Penas" }) => {
     return (
         <MainLayout title={event}>
-            {matches.map((match, i) => (
-                <Match key={i} match={match} />
-            ))}
+            <>
+                {matches.map((match, i) => (
+                    <Match key={i} match={match} />
+                ))}
+            </>
         </MainLayout>
     );
 };
@@ -33,7 +37,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log(JSON.parse(JSON.stringify(matches)));
     const { slug } = ctx.params as { slug: string };
 
-    const matches = await MatchModel.find({ eventCode: slug });
+    const matches = await MatchModel.find({
+        eventCode: slug.toLocaleLowerCase(),
+    });
 
     if (slug.length === 0) {
         return {

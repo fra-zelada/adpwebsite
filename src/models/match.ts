@@ -4,7 +4,7 @@ import { IMatch, IOponent } from '../interfaces/match';
 
 const oponentSchema = new Schema<IOponent>({
     name:     { type: String, required: true},
-    votes:     { type: Number, required: true},
+    votes:     { type: Number, default:0},
     
 
 },
@@ -17,8 +17,10 @@ const matchSchema = new Schema<IMatch>({
     subtitle:     { type: String, required: true},
     img:     { type: String, required: true},
     oponents:     [{ type: oponentSchema, required: true}],
-    eventCode:     { type: String, required: true},
-    votes:     { type: Number},
+    eventCode:     { type: String},
+    votes:     { type: Number, default: 0},
+    event:  { type: Schema.Types.ObjectId, ref: 'ScheduledEvent' }
+
 
 },
 {

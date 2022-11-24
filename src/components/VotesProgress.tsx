@@ -10,7 +10,7 @@ import LinearProgress, {
 interface Props {
     colorBar?: string;
     oponent: string;
-    percentage: string;
+    percentage: number;
     votes: number;
 }
 

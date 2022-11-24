@@ -1,33 +1,47 @@
+import { isValidObjectId } from 'mongoose';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Match from '../../../src/models/match';
+import mongoose from 'mongoose';
 
 type Data = {
-    name: string
+    message: string
 } | any
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     
     switch (req.method) {
         case 'GET':
-            getEvents(req, res);
-            break;
+            return getEventMatches(req, res);
     
         default:
-            res.status(200).json({ name: 'Example' })
+            return res.status(404).json({ message: 'Ruta incorrecta' })
     }
 
 }
 
-async function getEvents(req: NextApiRequest, res: NextApiResponse<Data>) {
+async function getEventMatches(req: NextApiRequest, res: NextApiResponse<Data>) {
     
     const { slug } = req.query;
-    console.log({slug})
-    const result = await Match.find( {
-        eventCode : slug
-    } 
-    )
+    if(!isValidObjectId(slug)){
+        return res.status(400).json( {message: 'Invalid ID'} )
+    }
+    console.log(slug)
+    try {
+        
+        const result = await Match.find( {
+            event : new mongoose.Types.ObjectId(`${slug}`)
+            } 
+        ).populate('event')
+        console.log(result)
+        return res.status(200).json( result )
+
+    } catch (error) {
+        console.log('error getEventMatches')
+        console.log(error)
+        return res.status(404).json( {message: 'Error'} )
+
+    }
 
 
-    return res.status(200).json( result )
 
 }

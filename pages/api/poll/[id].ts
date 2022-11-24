@@ -27,7 +27,6 @@ async function newVote(req: NextApiRequest, res: NextApiResponse<Data>) {
     //     'oponents.$.votes': 200}},
     { $inc: { 'oponents.$.votes': 1 } } 
     )
-    console.log(result)
 
     return res.status(200).json({ name: 'Example' })
 

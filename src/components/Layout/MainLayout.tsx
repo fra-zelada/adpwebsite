@@ -17,7 +17,7 @@ const MainLayout: FC<PropsWithChildren<Props>> = ({
     return (
         <div>
             <Head>
-                <title>ADP - {title}</title>
+                <title>{`ADP - ${title}`}</title>
                 <meta
                     name="viewport"
                     content="initial-scale=1, width=device-width"

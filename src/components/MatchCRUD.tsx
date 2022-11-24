@@ -8,87 +8,98 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import axios from "axios";
 import { IMatch, IOponent } from "../interfaces/match";
+import { useRouter } from "next/router";
+import { IEvent } from "../interfaces/event";
+import AutocompleteEvent from "./utils/AutocompleteEvent";
+import { IScheduledEvent } from "../interfaces/scheduledEvent";
+import moment from "moment";
 
-const MatchCRUD = () => {
-    const [oponentsTags, setOponentsTags] = useState<any>([]);
-    const [form, setForm] = useState({
-        event: "",
-        title: "",
-        subtitle: "",
-        img: "",
-        oponents: "",
-        votes: 0,
-        eventCode: "wwe",
-    });
-    const { event, img, oponents, subtitle, title } = form;
+interface Props {
+    match?: IMatch;
+    eventList: IEvent[];
+    scheduledEvent: IScheduledEvent;
+}
+
+const MatchCRUD: FC<Props> = ({ match, eventList = [], scheduledEvent }) => {
+    const { event } = scheduledEvent;
+    const INITIAL_STATE: IMatch = match
+        ? match
+        : {
+              title: "",
+              subtitle: "",
+              img: "",
+              oponents: [],
+              eventCode: "",
+              votes: 0,
+              event: scheduledEvent,
+          };
+    const [pathEvent, setPathEvent] = useState("");
+    const [form, setForm] = useState<IMatch>(INITIAL_STATE);
+    const { img, oponents, subtitle, title, eventCode } = form;
+    const [oponentInput, setOponentInput] = useState("");
     const addOponent = (
         event:
             | React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
             | any
     ) => {
-        const oponent = event.target.value.trim();
-        if (oponent.length > 0)
-            setOponentsTags((oldArray: IOponent[]) => [...oldArray, oponent]);
-        setForm((prev) => ({ ...prev, oponents: "" }));
+        let name: string = event.target.value.trim();
+
+        if (name.length > 0) {
+            setForm((prev) => ({
+                ...prev,
+                oponents: [...prev.oponents, { name, votes: 0 }],
+            }));
+        }
+        setOponentInput("");
     };
-    const onDeleteOponentTag = (event: string) => {
-        let oponentsTemp = oponentsTags;
-        oponentsTemp = oponentsTags.filter(
-            (oponent: string) => oponent !== event
-        );
-        setOponentsTags(oponentsTemp);
+    const onDeleteOponentTag = (oponentName: string) => {
+        let oponentsTemp = [...oponents];
+        oponentsTemp = oponentsTemp.filter(({ name }) => name !== oponentName);
+        setForm((prev) => ({
+            ...prev,
+            oponents: [...oponentsTemp],
+        }));
     };
+
+    const router = useRouter();
 
     const onSubmit = async () => {
-        const oponentsArrayObject: { name: string; votes: number }[] = [];
-
-        oponentsTags.forEach((element: string) => {
-            oponentsArrayObject.push({ name: element, votes: 0 });
-        });
-
-        const newMatch: IMatch = {
-            eventCode: "wwe22",
-            subtitle: "asdsad",
-            img,
-            oponents: oponentsArrayObject,
-            title,
-
-            votes: 0,
-        };
-        try {
-            await axios.post("/api/match", newMatch);
-        } catch (error) {
-            alert(error);
+        if (form._id) {
+            try {
+                await axios.put("/api/match", form);
+                setPathEvent(scheduledEvent.slug);
+            } catch (error) {
+                alert(`updating error: ${error}`);
+            }
+        } else {
+            try {
+                await axios.post("/api/match", form);
+                setPathEvent(scheduledEvent.slug);
+            } catch (error) {
+                alert(error);
+            }
         }
     };
+
+    const [eventSelected, setEventSelected] = useState<IEvent | undefined>(
+        undefined
+    );
 
     return (
         <Box style={{ padding: 10, maxWidth: "80vw", minWidth: "80vw" }}>
             <React.Fragment>
-                <Typography variant="h6" gutterBottom>
-                    Nueva Lucha
+                <Typography variant="h4" gutterBottom>
+                    {`Evento: ${event?.company} ${event?.value}`}
+                </Typography>
+                <Typography variant="h5" gutterBottom>
+                    {`Fecha: ${moment(scheduledEvent.date).format(
+                        "DD-MM-YYYY HH:mm"
+                    )}`}
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <TextField
-                            required
-                            id="event"
-                            name="event"
-                            label="evento"
-                            fullWidth
-                            variant="standard"
-                            value={event}
-                            onChange={({ target }) => {
-                                setForm((prev) => ({
-                                    ...prev,
-                                    [target.name]: target.value,
-                                }));
-                            }}
-                        />
-                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextField
                             required
@@ -148,12 +159,9 @@ const MatchCRUD = () => {
                             name="oponent"
                             label="Oponente"
                             fullWidth
-                            value={oponents}
+                            value={oponentInput}
                             onChange={({ target }) => {
-                                setForm((prev) => ({
-                                    ...prev,
-                                    oponents: target.value,
-                                }));
+                                setOponentInput(target.value);
                             }}
                             variant="standard"
                             onBlur={addOponent}
@@ -165,13 +173,13 @@ const MatchCRUD = () => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        {oponentsTags.map((oponent: string, i: number) => (
+                        {oponents.map(({ name }, i) => (
                             <Chip
                                 key={i}
-                                label={oponent}
+                                label={name}
                                 variant="outlined"
                                 onClick={() => {}}
-                                onDelete={() => onDeleteOponentTag(oponent)}
+                                onDelete={() => onDeleteOponentTag(name)}
                             />
                         ))}
                     </Grid>

@@ -14,9 +14,11 @@ interface Props {
 const Home: NextPage<Props> = ({ matches, event = "A Duras Penas" }) => {
     return (
         <MainLayout title={event}>
-            {matches.map((match, i) => (
-                <Match key={i} match={match} />
-            ))}
+            <>
+                {matches.map((match, i) => (
+                    <Match key={i} match={match} />
+                ))}
+            </>
         </MainLayout>
     );
 };

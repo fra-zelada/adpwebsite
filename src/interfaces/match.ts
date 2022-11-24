@@ -1,4 +1,6 @@
 import { Schema } from "mongoose";
+import { IEvent } from './event';
+import { IScheduledEvent } from "./scheduledEvent";
 
 export interface IMatch {
     _id?: string;
@@ -8,6 +10,7 @@ export interface IMatch {
     eventCode?: string ,
     img: string,
     votes: number
+    event?: IScheduledEvent
 
 }
 
