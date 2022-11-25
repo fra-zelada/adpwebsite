@@ -37,8 +37,11 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log(JSON.parse(JSON.stringify(matches)));
     const { slug } = ctx.params as { slug: string };
 
-    const matches = await MatchModel.find({
-        eventCode: slug.toLocaleLowerCase(),
+    const matches = await MatchModel.find().populate({
+        path: "event",
+        match: {
+            slug: slug,
+        },
     });
 
     if (slug.length === 0) {

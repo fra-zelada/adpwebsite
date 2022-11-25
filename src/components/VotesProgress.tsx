@@ -57,7 +57,7 @@ const VotesProgress: FC<Props> = ({
             </Grid>
             <Grid
                 item
-                xs={7}
+                xs={6}
                 style={{
                     alignItems: "center",
                     alignContent: "center",
@@ -71,7 +71,7 @@ const VotesProgress: FC<Props> = ({
             </Grid>
             <Grid
                 item
-                xs={1}
+                xs={2}
                 style={{
                     alignItems: "center",
                     alignContent: "center",
