@@ -21,6 +21,8 @@ import LoginIcon from "@mui/icons-material/Login";
 import { Button } from "@mui/material";
 import NextLink from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const drawerWidth = 240;
 
@@ -75,6 +77,14 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export const DrawerNavigation = () => {
     const { data: session, status } = useSession();
+    const [user, setUser] = useState<any>({ name: "", email: "" });
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            setUser(session.user);
+        }
+    }, [status, session]);
+    const { name = "", email = "" } = user;
 
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -205,6 +215,19 @@ export const DrawerNavigation = () => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
+                {user.name && (
+                    <List>
+                        <ListItem disablePadding>
+                            <ListItemButton disabled>
+                                <ListItemIcon>
+                                    <AccountCircleIcon />
+                                </ListItemIcon>
+                                <ListItemText primary={`${name}`} />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                )}
+
                 <List>
                     <NextLink href={"/"}>
                         <ListItem disablePadding>

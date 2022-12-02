@@ -1,13 +1,21 @@
-import { Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
 import { GetServerSideProps } from "next";
 import { unstable_getServerSession } from "next-auth";
 import MainLayout from "../../src/components/Layout/MainLayout";
 import { authOptions } from "../api/auth/[...nextauth]";
+import NextLink from "next/link";
 
 const AdminPage = () => {
     return (
         <MainLayout>
-            <Typography variant="h4">... Panel en construcción</Typography>
+            <Typography variant="h4">Panel De Administrador</Typography>
+            <Divider />
+            <br />
+            <br />
+            <br />
+            <NextLink href={"/admin/event"}>
+                <Button variant="contained">Configuración de eventos</Button>
+            </NextLink>
         </MainLayout>
     );
 };

@@ -1,4 +1,6 @@
 .buttonCustom {
+  cursor: pointer;
+
   text-decoration: none;
   position: absolute;
   border: none;
@@ -31,6 +33,8 @@
  }
  
  .buttonCustom:before {
+  cursor: pointer;
+
   content: '';
   position: absolute;
   top: -5px;
@@ -45,6 +49,7 @@
  }
  
  .buttonCustom:hover::before {
+  cursor: pointer;
   filter: blur(20px);
  }
  
@@ -53,5 +58,7 @@
  }
 
  .shadowHover:hover {
+  cursor: pointer;
+
   box-shadow: 0 8px 50px #23232333;
  }

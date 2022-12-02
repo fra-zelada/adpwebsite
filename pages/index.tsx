@@ -14,7 +14,7 @@ interface Props {
 
 const Home: NextPage<Props> = ({ matches, event = "A Duras Penas" }) => {
     return (
-        <MainLayout title={event}>
+        <MainLayout title={event} showNavigation={false}>
             <Box
                 style={{
                     width: "80%",
@@ -114,14 +114,15 @@ const Home: NextPage<Props> = ({ matches, event = "A Duras Penas" }) => {
                                     justifyContent: "center",
                                 }}
                             >
-                                <Button
+                                <button
                                     className="buttonCustom"
                                     style={{ width: "20em", height: "4em" }}
-                                    fullWidth
-                                    href="/event"
+                                    onClick={() => (location.href = "/event")}
                                 >
-                                    Cartelera y votaciones
-                                </Button>
+                                    <NextLink href={"/event"} passHref>
+                                        CARTELERA Y VOTACIONES
+                                    </NextLink>
+                                </button>
                             </Box>
                         </Box>
                     </Grid>

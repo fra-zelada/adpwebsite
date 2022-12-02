@@ -3,6 +3,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { IScheduledEvent } from "../interfaces/scheduledEvent";
 import { FC } from "react";
 import moment from "moment";
+import NextLink from "next/link";
 
 interface Props {
     scheduledEvent: IScheduledEvent;
@@ -33,9 +34,9 @@ const EventDateCard: FC<Props> = ({ scheduledEvent }) => {
                 </Typography>
             </Box>
             <Box style={{ marginTop: "auto" }}>
-                <Button href={`/event/${slug}`} className="buttonCustom">
-                    CARTELERA
-                </Button>
+                <NextLink href={`/event/${slug}`}>
+                    <button className="buttonCustom">CARTELERA</button>
+                </NextLink>
             </Box>
         </Box>
     );

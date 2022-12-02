@@ -158,7 +158,9 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
             width: 260,
             renderCell: ({ row }) => {
                 return (
-                    <NextLink href={`/admin/event/${row.slug}`}>Ver</NextLink>
+                    <NextLink href={`/admin/event/${row.slug}`} passHref>
+                        <Button>Lista de Combates</Button>
+                    </NextLink>
                 );
             },
         },

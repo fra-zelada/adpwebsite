@@ -4,8 +4,6 @@ import { getCsrfToken } from "next-auth/react";
 import {
     getProviders,
     useSession,
-    signIn,
-    signOut,
     LiteralUnion,
     ClientSafeProvider,
 } from "next-auth/react";
@@ -13,7 +11,6 @@ import { GetServerSideProps } from "next";
 import { BuiltInProviderType } from "next-auth/providers";
 import { FC, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]";
 
@@ -44,7 +41,7 @@ const LoginPage: FC<Props> = ({ providers, csrfToken, error }) => {
     };
 
     return (
-        <MainLayout title={"Login"}>
+        <MainLayout title={"Login"} showNavigation={false}>
             <>
                 <Login
                     providers={providers}
@@ -69,7 +66,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     if (session) {
         return {
             redirect: {
-                destination: "/admin/event",
+                destination: "/admin",
                 permanent: false,
             },
         };

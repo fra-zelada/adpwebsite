@@ -1,11 +1,8 @@
-import { Box, Grid, Typography, Button } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import MainLayout from "../../src/components/Layout/MainLayout";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import EventDateCard from "../../src/components/EventDateCard";
-import { GetServerSideProps, GetStaticProps, NextPage } from "next";
-import Event from "../../src/models/event";
+import { GetServerSideProps, NextPage } from "next";
 import ScheduledEvent from "../../src/models/scheduledEvent";
-import { eventList } from "../../src/database/eventList";
 import { IScheduledEvent } from "../../src/interfaces/scheduledEvent";
 
 interface Props {
@@ -43,7 +40,10 @@ const eventPage: NextPage<Props> = ({ eventList }) => {
 
 export default eventPage;
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const eventList = await ScheduledEvent.find()
         .sort({ date: "desc" })
         .populate("event");
@@ -52,6 +52,5 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         props: {
             eventList: JSON.parse(JSON.stringify(eventList)),
         },
-        revalidate: 60 * 60 * 6,
     };
 };
