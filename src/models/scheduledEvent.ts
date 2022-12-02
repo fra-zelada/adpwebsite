@@ -1,11 +1,12 @@
 import mongoose, { Schema, model, connect, Model } from 'mongoose';
 import { IScheduledEvent } from '../interfaces/scheduledEvent';
+import Event from './event';
 
 
 const scheduledEventSchema = new Schema({
         date:     { type: Date, required: true},
         slug:     { type: String  },
-        event:  { type: Schema.Types.ObjectId, ref: 'Event' }
+        event:  { type: Schema.Types.ObjectId, ref: Event }
         
 },
 {

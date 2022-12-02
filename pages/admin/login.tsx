@@ -14,6 +14,8 @@ import { BuiltInProviderType } from "next-auth/providers";
 import { FC, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]";
 
 interface Props {
     providers: Record<
@@ -44,23 +46,11 @@ const LoginPage: FC<Props> = ({ providers, csrfToken, error }) => {
     return (
         <MainLayout title={"Login"}>
             <>
-                {session ? (
-                    <>
-                        Signed in as {session.user.email} <br />
-                        {JSON.stringify(session.accessToken)}
-                        {JSON.stringify(session.user)}
-                        <button onClick={() => signOut()}>Sign out</button>
-                    </>
-                ) : (
-                    <Login
-                        providers={providers}
-                        csrfToken={csrfToken}
-                        error={error}
-                    />
-                    // <div>Login</div>
-                )}
-
-                {/* <Login /> */}
+                <Login
+                    providers={providers}
+                    csrfToken={csrfToken}
+                    error={error}
+                />
             </>
         </MainLayout>
     );
@@ -70,6 +60,21 @@ const LoginPage: FC<Props> = ({ providers, csrfToken, error }) => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const session = await unstable_getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+    );
+
+    if (session) {
+        return {
+            redirect: {
+                destination: "/admin/event",
+                permanent: false,
+            },
+        };
+    }
+
     const providers = await getProviders();
 
     return {

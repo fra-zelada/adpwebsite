@@ -1,5 +1,6 @@
 import mongoose, { Schema, model, connect } from 'mongoose';
 import { IMatch, IOponent } from '../interfaces/match';
+import ScheduledEvent from './scheduledEvent';
 
 
 const oponentSchema = new Schema<IOponent>({
@@ -19,7 +20,7 @@ const matchSchema = new Schema<IMatch>({
     oponents:     [{ type: oponentSchema, required: true}],
     eventCode:     { type: String},
     votes:     { type: Number, default: 0},
-    event:  { type: Schema.Types.ObjectId, ref: 'ScheduledEvent' }
+    event:  { type: Schema.Types.ObjectId, ref: ScheduledEvent }
 
 
 },

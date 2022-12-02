@@ -9,13 +9,25 @@ import { IEvent } from "../../../src/interfaces/event";
 import { FC, SetStateAction, useEffect, useState } from "react";
 import { DateTimePicker, MobileDateTimePicker } from "@mui/x-date-pickers";
 import moment, { Moment } from "moment";
-import { Box, Button, Grid, Stack } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Divider,
+    Grid,
+    LinearProgress,
+    Paper,
+    Stack,
+    Typography,
+} from "@mui/material";
 import { IScheduledEvent } from "../../../src/interfaces/scheduledEvent";
 // import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
 import ScheduledEvent from "../../../src/models/scheduledEvent";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import NextLink from "next/link";
 import AutocompleteEvent from "../../../src/components/utils/AutocompleteEvent";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../../api/auth/[...nextauth]";
 interface Props {
     eventList: IEvent[];
     scheduledEvents: IScheduledEvent[];
@@ -40,9 +52,6 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
     const [scheduledEvenstList, setScheduledEvenstList] =
         useState(scheduledEvents);
 
-    const handleOnChange = (value: IEvent) => {
-        setEventSelected(value);
-    };
     const [eventSelected, setEventSelected] = useState<IEvent | undefined>(
         undefined
     );
@@ -53,8 +62,21 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
         setDateTime(moment(selectedDate)!);
     };
 
+    const [loading, setLoading] = useState(false);
+
     const [scheduledEventForUpdate, setScheduledEventForUpdate] =
         useState<IScheduledEvent | null>(null);
+
+    const cleanForm = () => {
+        setLoading(true);
+        setUpdating(false);
+        setEventSelected(undefined);
+        setDateTime(moment());
+        setScheduledEventForUpdate(null);
+        setTimeout(() => {
+            setLoading(false);
+        }, 100);
+    };
 
     const handleSubmit = async () => {
         if (scheduledEventForUpdate) {
@@ -142,7 +164,11 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
         },
     ];
 
+    const [updating, setUpdating] = useState(false);
+
     const handleUpdate = (idEvent: any, date: any, idScheduledEvent: any) => {
+        setLoading(true);
+        setUpdating(true);
         eventList.map((ev) => {
             if (ev._id === idEvent) setEventSelected(ev);
         });
@@ -150,6 +176,10 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
         scheduledEvenstList.map((ev) => {
             if (ev._id === idScheduledEvent) setScheduledEventForUpdate(ev);
         });
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 300);
     };
 
     const [rows, setRows] = useState<any>({ rows: [] });
@@ -175,45 +205,73 @@ const NewEvent: FC<Props> = ({ eventList, scheduledEvents }) => {
         <MainLayout>
             <Box sx={{ width: "90%" }}>
                 <Stack>
-                    <Grid container>
-                        <Grid item xs={6} sx={{ padding: 2 }}>
-                            <AutocompleteEvent
-                                eventList={eventList}
-                                eventSelected={eventSelected}
-                                setEventSelected={setEventSelected}
-                            />
-                        </Grid>
-                        <Grid item xs={6} sx={{ padding: 2 }}>
-                            <Box
-                                sx={{
-                                    visibility: !!eventSelected
-                                        ? "visible"
-                                        : "hidden",
-                                }}
-                            >
-                                <MobileDateTimePicker
-                                    label="Fecha Evento"
-                                    value={dateTime}
-                                    onChange={(value) =>
-                                        handleDateChange(value)
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} />
-                                    )}
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                onClick={handleSubmit}
-                            >
-                                {" "}
-                                Guardar{" "}
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    <Typography variant="h6">Mantenedor de Eventos</Typography>
+                    <Divider />
+
+                    <Paper
+                        variant="outlined"
+                        elevation={3}
+                        style={{
+                            background: updating ? "#FEFCF3" : "",
+                        }}
+                    >
+                        {loading && <LinearProgress color="secondary" />}
+                        <Box
+                            style={{
+                                visibility: loading ? "hidden" : "visible",
+                            }}
+                        >
+                            <Typography variant="subtitle1">
+                                {updating
+                                    ? `Modificando Evento`
+                                    : `Nuevo Evento...`}
+                            </Typography>
+                            <Divider />
+
+                            <Grid container>
+                                <Grid item xs={12} md={6} sx={{ padding: 2 }}>
+                                    <AutocompleteEvent
+                                        eventList={eventList}
+                                        eventSelected={eventSelected}
+                                        setEventSelected={setEventSelected}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={6} sx={{ padding: 2 }}>
+                                    <Box>
+                                        <MobileDateTimePicker
+                                            label="Fecha Evento"
+                                            value={dateTime}
+                                            onChange={(value) =>
+                                                handleDateChange(value)
+                                            }
+                                            renderInput={(params) => (
+                                                <TextField {...params} />
+                                            )}
+                                        />
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={4} md={2} sx={{ padding: 2 }}>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        onClick={cleanForm}
+                                    >
+                                        {" "}
+                                        Cancelar{" "}
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={4} md={2} sx={{ padding: 2 }}>
+                                    <Button
+                                        fullWidth
+                                        variant="contained"
+                                        onClick={handleSubmit}
+                                    >
+                                        {updating ? `Modificar` : `Crear`}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Paper>
                 </Stack>
                 <div style={{ height: "50vh", width: "100%", marginTop: 10 }}>
                     <DataGrid
@@ -241,6 +299,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // value: "Royal Rumble",
     // });
     // await newEvent.save();
+    const session = await unstable_getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+    );
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false,
+            },
+        };
+    }
     const events = await Event.find();
     const scheduledEvents = await ScheduledEvent.find().populate("event");
 

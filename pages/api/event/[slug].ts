@@ -25,19 +25,15 @@ async function getEventMatches(req: NextApiRequest, res: NextApiResponse<Data>) 
     if(!isValidObjectId(slug)){
         return res.status(400).json( {message: 'Invalid ID'} )
     }
-    console.log(slug)
     try {
         
         const result = await Match.find( {
             event : new mongoose.Types.ObjectId(`${slug}`)
             } 
         ).populate('event')
-        console.log(result)
         return res.status(200).json( result )
 
     } catch (error) {
-        console.log('error getEventMatches')
-        console.log(error)
         return res.status(404).json( {message: 'Error'} )
 
     }

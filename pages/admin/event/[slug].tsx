@@ -190,8 +190,11 @@ const EventAdminPage: FC<Props> = ({ matches = [], scheduledEvent }) => {
                                             </Button>
                                             <NextLink
                                                 href={`match/${slug}/${_id}`}
+                                                passHref
                                             >
-                                                Editar
+                                                <Button variant="outlined">
+                                                    Editar
+                                                </Button>
                                             </NextLink>
                                         </TableCell>
                                     </TableRow>
@@ -225,8 +228,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
 
     try {
-        const { slug } = ctx.query as { slug: string[] };
-        let eventSlug = slug[0];
+        const { slug } = ctx.query as { slug: string };
+        let eventSlug = slug;
 
         const scheduledEvent = await ScheduledEvent.findOne({
             slug: eventSlug,

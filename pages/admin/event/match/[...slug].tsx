@@ -15,7 +15,7 @@ const MatchAdminPage: FC<Props> = ({
     const router = useRouter();
 
     return (
-        <MainLayout>
+        <MainLayout showNavigation={false}>
             <>
                 {!!match ? (
                     <MatchCRUD
@@ -52,10 +52,27 @@ import ScheduledEvent from "../../../../src/models/scheduledEvent";
 import { isValidObjectId } from "mongoose";
 import { redirect } from "next/dist/server/api-utils";
 import { IScheduledEvent } from "../../../../src/interfaces/scheduledEvent";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions } from "../../../api/auth/[...nextauth]";
 
 export async function getServerSideProps(
     ctx: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
 ) {
+    const session = await unstable_getServerSession(
+        ctx.req,
+        ctx.res,
+        authOptions
+    );
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false,
+            },
+        };
+    }
+
     const { slug } = ctx.query as { slug: string[] };
 
     const event = slug[0] || "";

@@ -10,6 +10,8 @@ import MatchModel from "../../src/models/match";
 import { redirect } from "next/dist/server/api-utils";
 import ScheduledEvent from "../../src/models/scheduledEvent";
 import { IScheduledEvent } from "../../src/interfaces/scheduledEvent";
+import axios from "axios";
+import { Typography } from "@mui/material";
 interface Props {
     matches: IMatch[];
     event: string;
@@ -19,6 +21,12 @@ const Home: NextPage<Props> = ({ matches, event = "A Duras Penas" }) => {
     return (
         <MainLayout title={event}>
             <>
+                {matches.length === 0 && (
+                    <Typography variant="body1" sx={{ mt: 10 }}>
+                        Cartelera sin luchas por ahora...
+                    </Typography>
+                )}
+
                 {matches.map((match, i) => (
                     <Match key={i} match={match} />
                 ))}
@@ -37,14 +45,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // console.log(JSON.parse(JSON.stringify(matches)));
     const { slug } = ctx.params as { slug: string };
 
-    const matches = await MatchModel.find().populate({
-        path: "event",
-        match: {
-            slug: slug,
-        },
-    });
+    const scheduledEvent = await ScheduledEvent.findOne({
+        slug,
+    }).populate("event");
 
-    if (slug.length === 0) {
+    const { data: matches } = await axios.get(
+        `${process.env.PATH_LOCALHOST}/api/event/${scheduledEvent?._id}`
+    );
+
+    if (!!!scheduledEvent) {
         return {
             redirect: {
                 destination: "/",
@@ -53,14 +62,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         };
     }
 
-    if (matches.length === 0) {
-        return {
-            redirect: {
-                destination: "/",
-                permanent: true,
-            },
-        };
-    }
+    // if (matches.length === 0) {
+    //     return {
+    //         redirect: {
+    //             destination: "/",
+    //             permanent: true,
+    //         },
+    //     };
+    // }
 
     return {
         props: {
