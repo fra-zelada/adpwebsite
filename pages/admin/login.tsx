@@ -28,8 +28,8 @@ const LoginPage: FC<Props> = ({ providers, csrfToken, error }) => {
 
     const [loginForm, setLoginForm] = useState({
         csrfToken,
-        username: "",
-        password: "",
+        username: `${process.env.NEXT_PUBLIC_TEST_USER}`,
+        password: `${process.env.NEXT_PUBLIC_TEST_PASS}`,
     });
     const { username, password } = loginForm;
 
